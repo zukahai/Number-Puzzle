@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import GameSapXepSo.HighScore;
 
 import javax.swing.*;
 
@@ -23,18 +22,18 @@ public class GameSapXepSo extends JFrame implements KeyListener, ActionListener{
 	String name, sdt;
 	private Container cn;
 	private JPanel pn, pn2, pn3; 
+	int sizeW [] = {250, 600, 680};
+	int sizeH [] = {350, 700, 850};
 	private JButton b[][] = new JButton[maxSize][maxSize]; // một mảng hai chiều là các button.
 	private JButton highScore_bt, newGame_bt;
 	private JLabel time_lb;
-	JButton size;
-	public GameSapXepSo(String s, String SIZE, String name, String sdt) {
-		super(s);
+	public GameSapXepSo(int SIZE) {
+		super("HaiZuka - Number Puzzle");
 		this.name = name;
 		this.sdt = sdt;
 		cn = this.getContentPane();
-		size = new JButton(SIZE);
-		n = Integer.parseInt(SIZE);
-		if (n == 8)
+		n = SIZE;
+		if (n > 5)
 			n = 3;
 		time_lb = new JLabel("00:00:00:00");
 		time_lb.setFont(new Font("Arial", 1, 20));
@@ -90,8 +89,9 @@ public class GameSapXepSo extends JFrame implements KeyListener, ActionListener{
 		cn.add(pn);
 		cn.add(pn3, "South");
 		this.setVisible(true);
-		this.pack();
+		this.setSize(sizeW[n - 3], sizeH[n - 3]);
 		this.setLocationRelativeTo(null);
+		setResizable(false);
 		indexI = n; indexJ = n;
 		timer = new Timer(10, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -161,21 +161,7 @@ public class GameSapXepSo extends JFrame implements KeyListener, ActionListener{
 			}
 			if (kt) {
 				this.dispose(); // Đóng cửa số màn hình hiển tại.
-				// Qua level mới
-				try {
-					URL url = new URL("https://haizukon.000webhostapp.com/HighScore/GameSapXepSo/level_" + String.valueOf(Integer.parseInt(size.getText()) - 2) + "?vkuName=" + name + "&score=" + time_lb.getText() + "&sdt=" + sdt);
-					URLConnection urlConnection = url.openConnection();
-					HttpURLConnection connection = null;
-					if(urlConnection instanceof HttpURLConnection) {
-						connection = (HttpURLConnection) urlConnection;
-					}
-					BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getInputStream()));
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				new GameSapXepSo("VKU - Game Sắp Xếp Số - Level: " + (n + 1),String.valueOf(n+1), name, sdt);
+				new GameSapXepSo(n + 1);
 			} else {
 				b[n][n].setText(String.valueOf(""));
 			}
@@ -228,35 +214,20 @@ public class GameSapXepSo extends JFrame implements KeyListener, ActionListener{
 	public void keyTyped(KeyEvent e) {
 		
 	}
-	public static void main(String[] args) {
-		String name = JOptionPane.showInputDialog(null, "Nhập tên của bạn\n" + "(Tiếng việt không dấu)", "");
-		String sdt = "";
-		String checkSdt = "^0[0-9]{9}";
-		do {
-			sdt = JOptionPane.showInputDialog("Nhập số điện thoại của bạn:\n(Dùng để trao quà)");
-			if (!sdt.matches(checkSdt))
-				JOptionPane.showMessageDialog(null, "Số điện thoại không đúng\n" + "Vui lòng nhập lại");
-		} while(!sdt.matches(checkSdt));
-		JOptionPane.showMessageDialog(null, "Đã lưu điểm");
-		name = name.replace(" ", "%20");
-		System.out.println(name);
-		new GameSapXepSo("VKU - Game Sắp Xếp Số - Level: 1", "3", name, sdt);
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if (e.getActionCommand().endsWith(highScore_bt.getText())) {
-			new HighScore(1);
 		}
 		else if (e.getActionCommand().endsWith(newGame_bt.getText())) {
-			String name = JOptionPane.showInputDialog(null, "Nhập tên của bạn\n" + "(Tiếng việt không dấu)", "");
-			String sdt = JOptionPane.showInputDialog("Nhập số điện thoại của bạn:\n(Dùng để trao quà)");
-			name = name.replace(" ", "%20");
-			System.out.println(name);
-			new GameSapXepSo("VKU - Game Sắp Xếp Số - Level: 1", "3", name, sdt);
+			new GameSapXepSo(3);
 			this.dispose();
 		}
+	}
+	
+	public static void main(String[] args) {
+		new GameSapXepSo(3);
 	}
 }
 
